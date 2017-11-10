@@ -1,0 +1,17 @@
+[package]
+authors = ["Marcus Medom Ryding <mrok4a@gmail.com>"]
+license = "AGPL-3.0"
+name = "coignet"
+version = "0.1.0"
+
+[[bin]]
+doc = false
+name = "coignet"
+
+[dependencies]
+rocket = "0.3.3"
+rocket_codegen = "0.3.3"
+rocket_contrib = "0.3.3"
+serde = "1.0.19"
+serde_derive = "1.0.19"
+serde_json = "1.0.6"
