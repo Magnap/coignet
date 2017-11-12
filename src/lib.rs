@@ -15,4 +15,5 @@ extern crate serde_json;
 extern crate lru_cache;
 
 pub mod endpoints;
+pub mod backend;
 pub mod utils;
