@@ -1,4 +1,5 @@
 pub mod cached;
+pub mod persisted;
 
 use failure::{Error, Fail};
 pub fn error_type<T: Fail>(e: Error) -> Result<(), Error> {
