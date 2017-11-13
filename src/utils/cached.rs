@@ -42,7 +42,9 @@ impl<K: Eq + Hash + Clone, V> CachedStore<K, V> {
             self.cache.insert(key.clone(), value);
         }
         Ok(self.cache.get_mut(key).ok_or_else(|| {
-            error_msg("Value disappeared immediately after inserting into cache")
+            error_msg(
+                "Value disappeared immediately after inserting into cache. Maybe cache has size 0?",
+            )
         })?)
     }
 }
