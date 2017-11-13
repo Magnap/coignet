@@ -1,6 +1,7 @@
 use failure::Error;
 use std::ops::{Deref, DerefMut};
-use std::sync::{Arc, Mutex};
+pub use std::sync::{Arc, Mutex};
+use std::marker::PhantomData;
 
 // TODO find a more elegant way to allow cloning of the persistor
 type Persistor<T> = Arc<Mutex<Box<FnMut(&T) -> Result<(), Error>>>>;
@@ -8,7 +9,17 @@ type Persistor<T> = Arc<Mutex<Box<FnMut(&T) -> Result<(), Error>>>>;
 pub struct Persisted<T, S: PersistenceStrategy = OnDrop> {
     data: T,
     persist: Persistor<T>,
-    _strategy: S,
+    _strategy: PhantomData<S>,
+}
+
+impl<T, S: PersistenceStrategy> Persisted<T, S> {
+    pub fn new(data: T, persist: Persistor<T>) -> Self {
+        Persisted {
+            _strategy: PhantomData,
+            data,
+            persist,
+        }
+    }
 }
 
 pub trait PersistenceStrategy {
