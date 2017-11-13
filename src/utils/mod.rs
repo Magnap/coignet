@@ -32,3 +32,69 @@ pub mod in_memory {
         (cached_store, store)
     }
 }
+
+pub mod file_store {
+    use super::cached::{Cached, CachedStore, Hash, Store};
+    use super::persisted::{Arc, Mutex, Persisted};
+    use failure::{error_msg, Error};
+    use std::path::{Path, PathBuf};
+    use std::io::BufReader;
+    use std::fs::{File, OpenOptions};
+    use serde::Serialize;
+    use serde::de::DeserializeOwned;
+    use bincode::{deserialize_from, serialize_into, Infinite};
+    use std::mem::drop;
+
+    pub struct FileStore<K: Hash + Eq + AsRef<Path>, V: Serialize + DeserializeOwned> {
+        dir: PathBuf,
+        cache: Store<K, Persisted<V>>,
+    }
+
+    pub type FileStored<K, V> = Cached<K, Persisted<V>>;
+
+    impl<K: Hash + Eq + Clone + AsRef<Path>, V: Serialize + DeserializeOwned> FileStore<K, V> {
+        pub fn new(dir: PathBuf, cache_size: usize) -> Self {
+            let cache;
+            {
+                let dir = dir.clone();
+                cache = Store::new(CachedStore::new(
+                    cache_size,
+                    Box::new(move |key| {
+                        let mut loc = dir.clone();
+                        loc.push(&key);
+                        let mut file = BufReader::new(File::open(loc)?);
+                        let value = deserialize_from(&mut file, Infinite)?;
+                        let persisted;
+                        {
+                            let dir = dir.clone();
+                            let key: PathBuf = (&key as &AsRef<Path>).as_ref().to_owned();
+                            let persist = Box::new(move |val: &V| {
+                                let mut loc = dir.clone();
+                                loc.push(&key);
+                                let mut file = File::create(loc)?;
+                                serialize_into(&mut file, val, Infinite)?;
+                                Ok(())
+                            });
+                            persisted = Persisted::new(value, Arc::new(Mutex::new(persist)));
+                        }
+                        Ok(Arc::new(persisted))
+                    }),
+                ));
+            }
+            FileStore { dir, cache }
+        }
+
+        pub fn new_ref(&self, key: K) -> FileStored<K, V> {
+            self.cache.new_ref(key)
+        }
+
+        pub fn insert(&self, key: K, value: V) -> Result<FileStored<K, V>, Error> {
+            let mut loc = self.dir.clone();
+            loc.push(&key);
+            let mut file = File::create(loc)?;
+            serialize_into(&mut file, &value, Infinite)?;
+            let res = self.cache.new_ref(key);
+            Ok(res)
+        }
+    }
+}
