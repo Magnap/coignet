@@ -1,6 +1,6 @@
 use std::sync::Weak;
 pub use std::sync::{Arc, RwLock};
-pub use lru_cache::LruCache;
+use lru_cache::LruCache;
 pub use std::hash::Hash;
 use failure::{error_msg, Error};
 
@@ -33,6 +33,15 @@ impl<K: Eq + Hash + Clone, V> Eq for Cached<K, V> {}
 pub struct CachedStore<K: Eq + Hash, V> {
     pub cache: LruCache<K, V>,
     pub lookup: Box<FnMut(&K) -> Result<V, Error> + Send>,
+}
+
+impl<K: Eq + Hash, V> CachedStore<K, V> {
+    pub fn new(cache_size: usize, lookup: Box<FnMut(&K) -> Result<V, Error> + Send>) -> Self {
+        CachedStore {
+            lookup: lookup,
+            cache: LruCache::new(cache_size),
+        }
+    }
 }
 
 impl<K: Eq + Hash + Clone, V> CachedStore<K, V> {
