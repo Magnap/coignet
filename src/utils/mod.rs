@@ -8,8 +8,10 @@ pub fn error_type<T: Fail>(e: Error) -> Result<(), Error> {
 }
 
 pub mod in_memory {
-    use super::cached::{Arc, CachedStore, Hash, RwLock};
     use failure::error_msg;
+    use super::cached::CachedStore;
+    use std::hash::Hash;
+    use std::sync::{Arc, RwLock};
     use std::collections::HashMap;
 
     pub type InMemoryStore<K, V> = CachedStore<K, Arc<V>>;
@@ -34,8 +36,10 @@ pub mod in_memory {
 }
 
 pub mod file_store {
-    use super::cached::{Cached, CachedStore, Hash, Store};
-    use super::persisted::{Arc, Mutex, Persisted};
+    use super::cached::{Cached, CachedStore, Store};
+    use super::persisted::Persisted;
+    use std::hash::Hash;
+    use std::sync::{Arc, Mutex};
     use failure::Error;
     use std::path::PathBuf;
     use std::io::BufReader;

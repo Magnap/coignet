@@ -1,8 +1,8 @@
 use std::sync::Weak;
-pub use std::sync::{Arc, RwLock};
+use std::sync::{Arc, RwLock};
 use lru_cache::LruCache;
-pub use std::hash::Hash;
 use failure::{error_msg, Error};
+use std::hash::Hash;
 
 pub struct Store<K: Hash + Eq, V> {
     pub ptr: Arc<RwLock<CachedStore<K, Arc<V>>>>,
