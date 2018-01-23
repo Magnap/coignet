@@ -1,8 +1,8 @@
 use std::sync::Weak;
 use std::sync::{Arc, RwLock};
 use lru_cache::LruCache;
-use failure::{error_msg, Error};
 use std::hash::Hash;
+use failure::{err_msg, Error};
 
 pub struct Store<K: Hash + Eq, V> {
     pub ptr: Arc<RwLock<CachedStore<K, Arc<V>>>>,
@@ -51,7 +51,7 @@ impl<K: Eq + Hash + Clone, V> CachedStore<K, V> {
             self.cache.insert(key.clone(), value);
         }
         Ok(self.cache.get_mut(key).ok_or_else(|| {
-            error_msg(
+            err_msg(
                 "Value disappeared immediately after inserting into cache. Maybe cache has size 0?",
             )
         })?)

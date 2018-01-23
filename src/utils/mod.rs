@@ -8,10 +8,10 @@ pub fn error_type<T: Fail>(e: Error) -> Result<(), Error> {
 }
 
 pub mod in_memory {
-    use failure::error_msg;
     use super::cached::CachedStore;
     use std::hash::Hash;
     use std::sync::{Arc, RwLock};
+    use failure::err_msg;
     use std::collections::HashMap;
 
     pub type InMemoryStore<K, V> = CachedStore<K, Arc<V>>;
@@ -26,7 +26,7 @@ pub mod in_memory {
                 cache_size,
                 Box::new(move |key| {
                     let store = store.read().unwrap();
-                    let value: &V = store.get(key).ok_or_else(|| error_msg("Key not found"))?;
+                    let value: &V = store.get(key).ok_or_else(|| err_msg("Key not found"))?;
                     Ok(Arc::new(value.clone()))
                 }),
             );
