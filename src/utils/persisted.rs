@@ -33,7 +33,6 @@ impl PersistenceStrategy for OnDrop {
     const ON_DROP: bool = true;
 }
 
-
 pub struct OnRead;
 impl PersistenceStrategy for OnRead {
     const ON_WRITE: bool = true;
