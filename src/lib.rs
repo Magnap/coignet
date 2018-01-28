@@ -1,5 +1,8 @@
 #![feature(plugin)]
 #![plugin(rocket_codegen)]
+#![feature(use_nested_groups)]
+#![feature(never_type)]
+#![feature(try_trait)]
 
 extern crate rocket;
 extern crate rocket_contrib;
