@@ -72,9 +72,9 @@ impl<'a, K: Eq + Hash + Clone, V, KVS: KeyValueStore<'a, K, V>> KeyValueStore<'a
     type Error = KVS::Error;
     type Entry = Entry<K, KVS::Entry>;
 
-    fn insert(&'a mut self, key: &'a K, value: V) -> Result<Self::Entry, Self::Error> {
+    fn insert(&'a mut self, key: K, value: V) -> Result<Self::Entry, Self::Error> {
         let mut pool = self.pool.write().expect("singleton pool lock poisoned");
-        let raw_entry = self.store.insert(key, value)?;
+        let raw_entry = self.store.insert(key.clone(), value)?;
         let entry = Entry {
             ptr: Arc::new(SingletonEntry {
                 key: key.clone(),
@@ -83,7 +83,7 @@ impl<'a, K: Eq + Hash + Clone, V, KVS: KeyValueStore<'a, K, V>> KeyValueStore<'a
                 deleted: false.into(),
             }),
         };
-        pool.insert(key.clone(), entry.clone());
+        pool.insert(key, entry.clone());
         Ok(entry)
     }
     fn lookup(&'a mut self, key: &'a K) -> Result<Self::Entry, Self::Error> {

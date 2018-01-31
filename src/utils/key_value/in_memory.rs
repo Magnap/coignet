@@ -30,13 +30,13 @@ impl<V> super::Entry<V> for Entry<V> {
     }
 }
 
-impl<'a, K: Hash + Eq + Clone, V> super::KeyValueStore<'a, K, V> for InMemory<K, V> {
+impl<'a, K: Hash + Eq, V> super::KeyValueStore<'a, K, V> for InMemory<K, V> {
     type Error = ();
     type Entry = Entry<V>;
 
-    fn insert(&mut self, key: &K, value: V) -> Result<Self::Entry, Self::Error> {
+    fn insert(&mut self, key: K, value: V) -> Result<Self::Entry, Self::Error> {
         let entry = Entry(Arc::new(RwLock::new(value)));
-        self.0.insert(key.clone(), entry.clone());
+        self.0.insert(key, entry.clone());
         Ok(entry)
     }
     fn lookup(&mut self, key: &K) -> Result<Self::Entry, Self::Error> {

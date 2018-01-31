@@ -2,7 +2,7 @@ pub trait KeyValueStore<'a, K, V> {
     type Error;
     type Entry: Entry<V>;
     /// Must only succeed if there was previously no value associated with `key`.
-    fn insert(&'a mut self, key: &'a K, value: V) -> Result<Self::Entry, Self::Error>;
+    fn insert(&'a mut self, key: K, value: V) -> Result<Self::Entry, Self::Error>;
     fn lookup(&'a mut self, key: &'a K) -> Result<Self::Entry, Self::Error>;
     fn delete(&'a mut self, key: &'a K) -> Result<(), Self::Error>;
 }
