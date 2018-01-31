@@ -1,3 +1,8 @@
+pub mod cache;
+pub mod singleton;
+
+pub mod in_memory;
+
 pub trait KeyValueStore<'a, K, V> {
     type Error;
     type Entry: Entry<V>;
@@ -12,8 +17,3 @@ pub trait Entry<V> {
     fn read<T, F: FnOnce(&V) -> T>(&self, fun: F) -> Result<T, Self::Error>;
     fn write<T, F: FnOnce(&mut V) -> T>(&mut self, fun: F) -> Result<T, Self::Error>;
 }
-
-pub mod cache;
-pub mod singleton;
-
-pub mod in_memory;
