@@ -11,7 +11,7 @@ name = "coignet"
 [dependencies]
 bincode = "0.9.2"
 failure = { git = "https://github.com/withoutboats/failure"}
-lru-cache = "0.1.1"
+lru = "0.1.7"
 rocket = "0.3.3"
 rocket_codegen = "0.3.3"
 rocket_contrib = "0.3.3"

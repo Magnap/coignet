@@ -1,3 +1,5 @@
+pub mod lru;
+
 use super::KeyValueStore;
 use std::sync::{Arc, Mutex};
 
