@@ -13,7 +13,7 @@ pub trait Entry<V> {
     fn write<T, F: FnOnce(&mut V) -> T>(&mut self, fun: F) -> Result<T, Self::Error>;
 }
 
-pub mod cached;
+pub mod cache;
 pub mod singleton;
 
 pub mod in_memory;
